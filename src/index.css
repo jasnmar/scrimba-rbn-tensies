@@ -13,6 +13,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-family: Karla, sans-serif;
 }
 
 div#root {
@@ -91,6 +92,11 @@ button.roll-dice {
   background-color: #5035FF;
   color: white;
   font-size: 1.2rem;
+}
+
+.record {
+  margin-bottom: 0;
+  margin-top: .5rem;
 }
 
 .sr-only {

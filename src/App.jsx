@@ -6,6 +6,10 @@ import ReactConfetti from "react-confetti"
 
 function App() {
   const [dice, setDice] = useState(() => allNewDice())
+  const [rolls, setRolls] = useState(0)
+
+  let lowRoll = JSON.parse(localStorage.getItem("rolls"))
+
   const mainButton = useRef(null)
 
   function allNewDice() {
@@ -24,19 +28,23 @@ function App() {
   const heldSet = new Set(heldAr)
   const valSet = new Set(valAr)
   let gameWon = false
-  if(heldSet.size === 1 && valSet.size === 1 && heldSet.has(true)) {
+  if (heldSet.size === 1 && valSet.size === 1 && heldSet.has(true)) {
     gameWon = true
-  } 
+  }
 
   useEffect(() => {
-    if(gameWon) {
+    if (gameWon) {
       mainButton.current = document.getElementById("main-button")
       mainButton.current.focus()
+      if (rolls < lowRoll) {
+        localStorage.setItem("rolls", JSON.stringify(rolls))
+      } else if (lowRoll === null) {
+        localStorage.setItem("rolls", JSON.stringify(rolls))
+      }
     }
-  }, [gameWon])
+  }, [gameWon, rolls, lowRoll])
 
   function hold(id) {
-    console.log(id)
     const newDice = dice.map((die) => {
       return die.id === id ? { ...die, isHeld: !die.isHeld } : die
     })
@@ -44,15 +52,27 @@ function App() {
   }
 
   const diceElems = dice.map((die) => {
-    return <Die key={die.id} id={die.id} action={hold} value={die.value} isHeld={die.isHeld} />
+    return (
+      <Die
+        key={die.id}
+        id={die.id}
+        action={hold}
+        value={die.value}
+        isHeld={die.isHeld}
+      />
+    )
   })
 
   function reRoll() {
-    if(gameWon) {
+    if (gameWon) {
       setDice(allNewDice())
+      setRolls(0)
     } else {
+      setRolls((prevRolls) => prevRolls + 1)
       const newDice = dice.map((die) => {
-        return die.isHeld ? die : { ...die, value: Math.ceil(Math.random() * 6) }
+        return die.isHeld
+          ? die
+          : { ...die, value: Math.ceil(Math.random() * 6) }
       })
       setDice(newDice)
     }
@@ -61,14 +81,23 @@ function App() {
   return (
     <>
       <main>
-      {gameWon && <ReactConfetti />}
-            <div aria-live="polite" className="sr-only">
-                {gameWon && <p>Congratulations! You won! Press "New Game" to start again.</p>}
-            </div>
-            <h1 className="title">Tenzies</h1>
-            <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
+        {gameWon && <ReactConfetti />}
+        <div aria-live="polite" className="sr-only">
+          {gameWon && (
+            <p>Congratulations! You won! Press "New Game" to start again.</p>
+          )}
+        </div>
+        <p className="record">Low roll record: {lowRoll}</p>
+        <p className="record">Current Rolls: {rolls}</p>
+        <h1 className="title">Tenzies</h1>
+        <p className="instructions">
+          Roll until all dice are the same. Click each die to freeze it at its
+          current value between rolls.
+        </p>
         <div className="dice-container">{diceElems}</div>
-        <button id="main-button" onClick={reRoll}>{gameWon ? "New Game" : "Roll"}</button>
+        <button id="main-button" onClick={reRoll}>
+          {gameWon ? "New Game" : "Roll"}
+        </button>
       </main>
     </>
   )
