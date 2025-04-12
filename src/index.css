@@ -66,6 +66,10 @@ main > button {
   border-radius: 10px;
 }
 
+.dice-container .held {
+  background-color: #59E391;
+}
+
 .dice-container button {
   height: 50px;
   width: 50px;
