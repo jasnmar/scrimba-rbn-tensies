@@ -17,6 +17,7 @@ function App() {
       return {
         value: Math.ceil(Math.random() * 6),
         isHeld: false,
+        version: 0,
         id: nanoid()
       }
     })
@@ -59,6 +60,7 @@ function App() {
         action={hold}
         value={die.value}
         isHeld={die.isHeld}
+        version={die.version}
       />
     )
   })
@@ -69,12 +71,13 @@ function App() {
       setRolls(0)
     } else {
       setRolls((prevRolls) => prevRolls + 1)
-      const newDice = dice.map((die) => {
-        return die.isHeld
-          ? die
-          : { ...die, value: Math.ceil(Math.random() * 6) }
+      setDice((prevDice) => {
+        return prevDice.map((die) => {
+          return die.isHeld
+            ? die
+            : { ...die, value: Math.ceil(Math.random() * 6), version: die.version + 1}
+        })
       })
-      setDice(newDice)
     }
   }
 

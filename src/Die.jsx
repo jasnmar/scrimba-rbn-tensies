@@ -17,7 +17,7 @@ function Die(props) {
       }
     }, 25)
     return () => clearInterval(interval)
-  },[props.value] )
+  },[props.version, props.value] )
 
 
 
